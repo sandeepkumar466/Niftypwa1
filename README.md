@@ -3,305 +3,391 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#01696f" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Nifty Trend" />
-  <link rel="manifest" href="./manifest.webmanifest" />
-  <link rel="apple-touch-icon" href="./assets/icon-192.png" />
-  <title>Nifty Trend PWA</title>
+  <title>MStock Trading Journal</title>
   <style>
-    :root {
-      --bg: #f7f6f2;
-      --card: #ffffff;
-      --text: #1f1d19;
-      --muted: #6c6a64;
-      --pri: #01696f;
-      --ok: #437a22;
-      --bad: #a12c7b;
-      --warn: #964219;
-      --border: #ddd9d1;
-      --shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
+    :root{
+      --bg:#f7f6f2;
+      --card:#ffffff;
+      --text:#1f1d19;
+      --muted:#6c6a64;
+      --pri:#01696f;
+      --pri2:#0c4e54;
+      --border:#ddd9d1;
+      --shadow:0 10px 28px rgba(0,0,0,.06);
+      --good:#2f7d32;
+      --bad:#b3261e;
     }
-    [data-theme="dark"] {
-      --bg: #171614;
-      --card: #1c1b19;
-      --text: #e8e5dd;
-      --muted: #a5a29b;
-      --pri: #57aab2;
-      --ok: #7ac14b;
-      --bad: #e26ab8;
-      --warn: #d47a50;
-      --border: #34322f;
-      --shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+      background:var(--bg);
+      color:var(--text);
     }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    .app{
+      max-width:1200px;
+      margin:0 auto;
+      padding:16px;
     }
-    .app {
-      max-width: 560px;
-      margin: 0 auto;
-      padding: 16px 16px 48px;
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:16px;
+      flex-wrap:wrap;
     }
-    .top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 14px;
+    .brand h1{margin:0;font-size:22px}
+    .brand p{margin:4px 0 0;color:var(--muted);font-size:14px}
+    .chip{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(1,105,111,.1);
+      color:var(--pri);
+      font-size:13px;
+      font-weight:700;
+      margin-left:8px;
     }
-    .brand {
-      display: flex;
-      gap: 12px;
-      align-items: center;
+    .grid-cards{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+      margin-bottom:16px;
     }
-    .mark {
-      width: 46px;
-      height: 46px;
-      border-radius: 15px;
-      background: linear-gradient(145deg, var(--pri), #0c4e54);
-      color: #fff;
-      display: grid;
-      place-items: center;
-      font-weight: 900;
-      box-shadow: var(--shadow);
-      flex: 0 0 auto;
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:16px;
+      box-shadow:var(--shadow);
     }
-    h1, h2, h3, p { margin: 0; }
-    .subtitle {
-      color: var(--muted);
-      margin-top: 4px;
-      font-size: 14px;
+    .card small{color:var(--muted);display:block;margin-bottom:6px}
+    .card strong{font-size:26px}
+    .good{color:var(--good)}
+    .bad{color:var(--bad)}
+    .layout{
+      display:grid;
+      grid-template-columns:1.15fr .85fr;
+      gap:16px;
+      align-items:start;
     }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 16px;
-      margin-bottom: 14px;
-      box-shadow: var(--shadow);
+    h2{
+      margin:0 0 12px;
+      font-size:18px;
     }
-    .hero h2 { font-size: 20px; line-height: 1.35; }
-    .hero p { color: var(--muted); margin-top: 8px; }
-    .pill {
-      display: inline-block;
-      background: rgba(1, 105, 111, 0.10);
-      color: var(--pri);
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 700;
-      margin: 8px 6px 0 0;
+    .section{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:20px;
+      padding:16px;
+      box-shadow:var(--shadow);
+      margin-bottom:16px;
     }
-    .score {
-      font-size: 44px;
-      font-weight: 900;
-      line-height: 1;
-      margin-top: 8px;
-      letter-spacing: -1px;
+    .form-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
     }
-    .up { color: var(--ok); }
-    .down { color: var(--bad); }
-    .neutral { color: var(--warn); }
-    .bias {
-      font-weight: 800;
-      font-size: 18px;
-      margin-top: 6px;
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
     }
-    .bar {
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.08);
-      overflow: hidden;
-      margin-top: 12px;
+    label{
+      font-size:13px;
+      color:var(--muted);
+      font-weight:600;
     }
-    .bar span {
-      display: block;
-      width: 68%;
-      height: 100%;
-      background: linear-gradient(90deg, var(--bad), var(--warn), var(--ok));
+    input,select,textarea{
+      width:100%;
+      padding:12px 13px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:#fff;
+      color:var(--text);
+      outline:none;
+      font:inherit;
     }
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 14px;
+    textarea{min-height:108px;resize:vertical}
+    .span-2{grid-column:span 2}
+    .span-3{grid-column:span 3}
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
     }
-    .metric {
-      background: rgba(0, 0, 0, 0.03);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 12px;
+    button{
+      border:0;
+      border-radius:14px;
+      padding:12px 16px;
+      min-height:44px;
+      font-weight:700;
+      cursor:pointer;
+      font:inherit;
     }
-    .metric small {
-      display: block;
-      color: var(--muted);
-      margin-bottom: 4px;
-      font-size: 12px;
+    .pri{background:var(--pri);color:#fff}
+    .sec{background:#f2f2f2;color:var(--text)}
+    table{
+      width:100%;
+      border-collapse:collapse;
+      overflow:hidden;
+      border-radius:16px;
     }
-    .row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 14px;
+    th,td{
+      text-align:left;
+      padding:12px 10px;
+      border-bottom:1px solid var(--border);
+      font-size:14px;
+      vertical-align:top;
     }
-    button {
-      border: 0;
-      border-radius: 14px;
-      padding: 12px 14px;
-      font-weight: 700;
-      min-height: 44px;
-      cursor: pointer;
+    th{
+      color:var(--muted);
+      font-size:13px;
     }
-    .pri {
-      background: var(--pri);
-      color: #fff;
+    .table-wrap{overflow:auto}
+    .muted{color:var(--muted)}
+    .right-column .section:last-child{margin-bottom:0}
+    .list{
+      display:grid;
+      gap:10px;
     }
-    .sec {
-      background: rgba(0, 0, 0, 0.05);
-      color: var(--text);
-      border: 1px solid var(--border);
+    .mini{
+      padding:12px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:#fff;
     }
-    .list {
-      display: grid;
-      gap: 10px;
-      margin-top: 10px;
+    .mini time{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:4px;
     }
-    .item {
-      background: rgba(0, 0, 0, 0.03);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 12px;
+    @media (max-width: 980px){
+      .layout{grid-template-columns:1fr}
+      .grid-cards{grid-template-columns:repeat(2,1fr)}
+      .form-grid{grid-template-columns:repeat(2,1fr)}
+      .span-3{grid-column:span 2}
     }
-    .item time {
-      display: block;
-      color: var(--muted);
-      font-size: 12px;
-      margin-bottom: 4px;
-    }
-    .note {
-      background: rgba(1, 105, 111, 0.10);
-      color: var(--pri);
-      padding: 14px;
-      border-radius: 16px;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-    .footer {
-      text-align: center;
-      color: var(--muted);
-      font-size: 12px;
-      margin-top: 10px;
+    @media (max-width: 640px){
+      .grid-cards{grid-template-columns:1fr}
+      .form-grid{grid-template-columns:1fr}
+      .span-2,.span-3{grid-column:span 1}
     }
   </style>
 </head>
 <body>
   <main class="app">
-    <div class="top">
+    <div class="topbar">
       <div class="brand">
-        <div class="mark">▲</div>
-        <div>
-          <h1>Nifty Trend</h1>
-          <div class="subtitle">PWA test build</div>
-        </div>
+        <h1>MStock Trading Journal</h1>
+        <span class="chip">V1</span>
+        <p>Manual trade entry + closing fund + reports starter</p>
       </div>
-      <button class="sec" id="themeBtn">◐</button>
     </div>
 
-    <section class="card hero">
-      <h2>Safari से open करके Home Screen पर add करें.</h2>
-      <p>यह lightweight PWA build iPhone testing के लिए तैयार है.</p>
+    <section class="grid-cards">
+      <div class="card"><small>Today P&L</small><strong class="good">₹12,450</strong></div>
+      <div class="card"><small>Monthly P&L</small><strong class="good">₹1,04,320</strong></div>
+      <div class="card"><small>Closing Fund</small><strong>₹3,48,210</strong></div>
+      <div class="card"><small>Win Rate</small><strong>61%</strong></div>
+    </section>
+
+    <section class="layout">
       <div>
-        <span class="pill">Options</span>
-        <span class="pill">USD/INR</span>
-        <span class="pill">News</span>
-        <span class="pill">Alerts</span>
+        <section class="section">
+          <h2>Manual Trade Entry</h2>
+          <form>
+            <div class="form-grid">
+              <div class="field">
+                <label>Trade Date</label>
+                <input type="date" />
+              </div>
+              <div class="field">
+                <label>Entry Time</label>
+                <input type="time" />
+              </div>
+              <div class="field">
+                <label>Exit Time</label>
+                <input type="time" />
+              </div>
+
+              <div class="field span-2">
+                <label>Symbol / Instrument</label>
+                <input type="text" placeholder="NIFTY / BANKNIFTY / STOCK" />
+              </div>
+              <div class="field">
+                <label>Segment</label>
+                <select>
+                  <option>Intraday</option>
+                  <option>Options</option>
+                  <option>Futures</option>
+                  <option>Delivery</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>Direction</label>
+                <select>
+                  <option>Buy</option>
+                  <option>Sell</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Option Type</label>
+                <select>
+                  <option>None</option>
+                  <option>CE</option>
+                  <option>PE</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Strike Price</label>
+                <input type="number" placeholder="e.g. 23500" />
+              </div>
+
+              <div class="field">
+                <label>Quantity / Lots</label>
+                <input type="number" placeholder="1" />
+              </div>
+              <div class="field">
+                <label>Entry Price</label>
+                <input type="number" step="0.05" placeholder="e.g. 125.50" />
+              </div>
+              <div class="field">
+                <label>Exit Price</label>
+                <input type="number" step="0.05" placeholder="e.g. 131.25" />
+              </div>
+
+              <div class="field">
+                <label>Stop Loss</label>
+                <input type="number" step="0.05" />
+              </div>
+              <div class="field">
+                <label>Target</label>
+                <input type="number" step="0.05" />
+              </div>
+              <div class="field">
+                <label>Setup Tag</label>
+                <input type="text" placeholder="Breakout / Reversal / Trend" />
+              </div>
+
+              <div class="field">
+                <label>Gross P&L</label>
+                <input type="number" step="0.01" />
+              </div>
+              <div class="field">
+                <label>Charges</label>
+                <input type="number" step="0.01" />
+              </div>
+              <div class="field">
+                <label>Net P&L</label>
+                <input type="number" step="0.01" />
+              </div>
+
+              <div class="field">
+                <label>Trade Status</label>
+                <select>
+                  <option>Closed</option>
+                  <option>Open</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Emotion Tag</label>
+                <select>
+                  <option>Calm</option>
+                  <option>Greedy</option>
+                  <option>Fearful</option>
+                  <option>Confident</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Broker Ref / Order ID</label>
+                <input type="text" />
+              </div>
+
+              <div class="field span-3">
+                <label>Notes</label>
+                <textarea placeholder="Entry reason, exit reason, mistakes, observations..."></textarea>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="pri" type="button">Save Trade</button>
+              <button class="sec" type="button">Calculate P&L</button>
+              <button class="sec" type="reset">Clear</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="section">
+          <h2>Trades Table</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Symbol</th>
+                  <th>Type</th>
+                  <th>Entry</th>
+                  <th>Exit</th>
+                  <th>Qty</th>
+                  <th>Charges</th>
+                  <th>Net P&L</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>21-Jun</td>
+                  <td>NIFTY 23500 CE</td>
+                  <td>Options</td>
+                  <td>125.50</td>
+                  <td>131.25</td>
+                  <td>50</td>
+                  <td>₹180</td>
+                  <td class="good">₹7,470</td>
+                  <td>Closed</td>
+                </tr>
+                <tr>
+                  <td>21-Jun</td>
+                  <td>BANKNIFTY</td>
+                  <td>Intraday</td>
+                  <td>48,120</td>
+                  <td>48,050</td>
+                  <td>1</td>
+                  <td>₹145</td>
+                  <td class="bad">-₹845</td>
+                  <td>Closed</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
       </div>
+
+      <aside class="right-column">
+        <section class="section">
+          <h2>Overview</h2>
+          <div class="list">
+            <div class="mini"><time>Funds</time>Pay-in ₹2,00,000 · Pay-out ₹50,000 · Available ₹3,48,210</div>
+            <div class="mini"><time>Risk</time>Max loss today ₹3,250 · Best trade NIFTY 23500 CE</div>
+            <div class="mini"><time>Session</time>Morning: 4 trades · Afternoon: 2 trades</div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Monthly Summary</h2>
+          <div class="list">
+            <div class="mini"><time>Win / Loss</time>18 wins · 11 losses</div>
+            <div class="mini"><time>Profit Factor</time>1.72</div>
+            <div class="mini"><time>Average Hold</time>14m 22s</div>
+          </div>
+        </section>
+      </aside>
     </section>
-
-    <section class="card">
-      <h3>Trend board</h3>
-      <div class="score up" id="score">+2.7</div>
-      <div id="bias" class="bias up">Bullish bias</div>
-      <div class="bar"><span id="bar"></span></div>
-
-      <div class="grid">
-        <div class="metric"><small>Option chain</small><strong>PCR 1.13</strong></div>
-        <div class="metric"><small>USD/INR</small><strong>83.41</strong></div>
-        <div class="metric"><small>News stress</small><strong>Medium</strong></div>
-        <div class="metric"><small>Action</small><strong>Buy dips only</strong></div>
-      </div>
-
-      <div class="row">
-        <button class="pri" id="simulateBtn">Simulate trend</button>
-        <button class="sec" id="notifyBtn">Sample alert</button>
-      </div>
-    </section>
-
-    <section class="card">
-      <h3>Trigger timeline</h3>
-      <div class="list">
-        <div class="item"><time>09:18</time>Put support visible near ATM strikes.</div>
-        <div class="item"><time>11:05</time>USD/INR steady, macro pressure limited.</div>
-        <div class="item"><time>13:42</time>Support reclaimed, bias moved back bullish.</div>
-      </div>
-    </section>
-
-    <section class="note">
-      iPhone: Share → Add to Home Screen. This build is offline-ready and can be tested in Safari.
-    </section>
-
-    <div class="footer">Nifty Trend PWA · GitHub Pages ready</div>
   </main>
-
-  <script>
-    const root = document.documentElement;
-    let dark = false;
-
-    const states = [
-      ['+2.7', 'Bullish bias', 'up', '68%'],
-      ['-3.4', 'Bearish bias', 'down', '22%'],
-      ['+0.6', 'Rangebound', 'neutral', '50%']
-    ];
-    let i = 0;
-
-    document.getElementById('simulateBtn').addEventListener('click', () => {
-      i = (i + 1) % states.length;
-      const [score, bias, cls, width] = states[i];
-      document.getElementById('score').textContent = score;
-      document.getElementById('bias').textContent = bias;
-      document.getElementById('score').className = 'score ' + cls;
-      document.getElementById('bias').className = 'bias ' + cls;
-      document.getElementById('bar').style.width = width;
-    });
-
-    document.getElementById('themeBtn').addEventListener('click', () => {
-      dark = !dark;
-      root.setAttribute('data-theme', dark ? 'dark' : 'light');
-    });
-
-    document.getElementById('notifyBtn').addEventListener('click', async () => {
-      if (!('Notification' in window)) {
-        alert('Notifications not supported on this browser.');
-        return;
-      }
-      const perm = await Notification.requestPermission();
-      if (perm === 'granted') {
-        new Notification('Nifty Trend Alert', {
-          body: 'Sample alert: bullish bias with supportive option chain.'
-        });
-      }
-    });
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js').catch(() => {});
-      });
-    }
-  </script>
 </body>
 </html>
